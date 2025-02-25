@@ -1,0 +1,39 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Virtual environments
+venv/
+env/
+ENV/
+.env
+.venv
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Local experiment results
+logs/
+results/
+*.log
+
+# OS specific files
+.DS_Store
+Thumbs.db
+
+# Model checkpoints and data
+*.h5
+*.pkl
+*.npy
