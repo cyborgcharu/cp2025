@@ -127,9 +127,9 @@ class GeneratorAgent:
         
     def state_to_index(self, state):
         """Convert continuous state to discrete indices for Q-table"""
-        low_idx = min(9, int(state[0] * 10))
-        high_idx = min(9, int(state[1] * 10))
-        guess_idx = min(9, int(state[2] * 10))
+        low_idx = min(4, int(state[0] * 5))
+        high_idx = min(4, int(state[1] * 5)) 
+        guess_idx = min(4, int(state[2] * 5))
         
         if state[3] == -1:
             result_idx = 0
@@ -138,7 +138,7 @@ class GeneratorAgent:
         else: 
             result_idx = 2
             
-        state_index = low_idx + high_idx * 10 + guess_idx * 100 + result_idx * 1000
+        state_index = low_idx + high_idx * 5 + guess_idx * 25 + result_idx * 125
         return min(state_index, self.q_table.shape[0] - 1)
     
     def choose_action(self, state):
@@ -170,7 +170,7 @@ class GeneratorAgent:
 def train(lower_bound=1, upper_bound=100, episodes=1000, answers=None):
     """Train the generator agent over multiple episodes"""
     
-    state_bins = 100  
+    state_bins = 100
     
     generator = GeneratorAgent(
         action_space_size=11,  
@@ -252,8 +252,8 @@ def test_agent(generator, lower_bound=1, upper_bound=100, test_episodes=100, ans
 
 if __name__ == "__main__":
     LOWER_BOUND = 1
-    UPPER_BOUND = 5
-    TRAINING_EPISODES = 25000
+    UPPER_BOUND = 100
+    TRAINING_EPISODES = 2500
     
     ANSWERS = None
     
