@@ -6,7 +6,7 @@ import random
 __version__ = "1.1.0"
 
 class NumberGuessingEnv(gym.Env):
-    def __init__(self, lower_bound=1, upper_bound=5, answer=None):
+    def __init__(self, lower_bound=1, upper_bound=100, answer=None):
         super(NumberGuessingEnv, self).__init__()
         
         self.lower_bound = lower_bound
