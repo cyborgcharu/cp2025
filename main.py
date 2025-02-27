@@ -3,7 +3,7 @@ from gymnasium import spaces
 import numpy as np
 import random
 
-__version__ = "2.0.0"
+__version__ = "2.0.1"
 
 class NumberGuessingEnv(gym.Env):
     def __init__(self, lower_bound=1, upper_bound=100, answer=None):
