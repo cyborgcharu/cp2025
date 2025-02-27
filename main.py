@@ -3,8 +3,10 @@ from gymnasium import spaces
 import numpy as np
 import random
 
+__version__ = "0.1.0"
+
 class NumberGuessingEnv(gym.Env):
-    def __init__(self, lower_bound=1, upper_bound=100, answer=None):
+    def __init__(self, lower_bound=1, upper_bound=5, answer=None):
         super(NumberGuessingEnv, self).__init__()
         
         self.lower_bound = lower_bound
@@ -114,19 +116,20 @@ class NumberGuessingEnv(gym.Env):
 class GeneratorAgent:
     """The agent responsible for generating guesses"""
     
-    def __init__(self, action_space_size, state_space_size, learning_rate=0.1, discount_factor=0.95):
-        self.q_table = np.zeros((state_space_size, state_space_size, 10, 3, action_space_size))
+    def __init__(self, action_space_size, state_space_size, learning_rate=0.01, discount_factor=0.95):
+        self.q_table = np.zeros((state_space_size, action_space_size))
         self.learning_rate = learning_rate
         self.discount_factor = discount_factor
         self.exploration_rate = 1.0
         self.min_exploration_rate = 0.01
         self.exploration_decay = 0.005
+        self.action_space_size = action_space_size
         
     def state_to_index(self, state):
         """Convert continuous state to discrete indices for Q-table"""
-        low_idx = min(self.q_table.shape[0]-1, int(state[0] * self.q_table.shape[0]))
-        high_idx = min(self.q_table.shape[1]-1, int(state[1] * self.q_table.shape[1]))
-        guess_idx = min(self.q_table.shape[2]-1, int(state[2] * self.q_table.shape[2]))
+        low_idx = min(9, int(state[0] * 10))
+        high_idx = min(9, int(state[1] * 10))
+        guess_idx = min(9, int(state[2] * 10))
         
         if state[3] == -1:
             result_idx = 0
@@ -135,12 +138,13 @@ class GeneratorAgent:
         else: 
             result_idx = 2
             
-        return low_idx, high_idx, guess_idx, result_idx
+        state_index = low_idx + high_idx * 10 + guess_idx * 100 + result_idx * 1000
+        return min(state_index, self.q_table.shape[0] - 1)
     
     def choose_action(self, state):
         """Select action using epsilon-greedy policy"""
         if random.random() < self.exploration_rate:
-            return random.randint(0, self.q_table.shape[4]-1)
+            return random.randint(0, self.action_space_size - 1)
         else:
             state_idx = self.state_to_index(state)
             return np.argmax(self.q_table[state_idx])
@@ -201,7 +205,8 @@ def train(lower_bound=1, upper_bound=100, episodes=1000, answers=None):
         if (episode + 1) % 100 == 0:
             avg_reward = np.mean(total_rewards[-100:])
             avg_guesses = np.mean(guess_counts[-100:])
-            print(f"Episode {episode+1}/{episodes} - Avg Reward: {avg_reward:.2f}, Avg Guesses: {avg_guesses:.2f}")
+            print(f"Episode {episode+1}/{episodes} - Avg Return: {avg_reward:.2f}, Avg Guesses: {avg_guesses:.2f}")
+            print(f"q_table: {generator.q_table}")
     
     return generator, total_rewards, guess_counts
 
@@ -247,8 +252,8 @@ def test_agent(generator, lower_bound=1, upper_bound=100, test_episodes=100, ans
 
 if __name__ == "__main__":
     LOWER_BOUND = 1
-    UPPER_BOUND = 100
-    TRAINING_EPISODES = 2500
+    UPPER_BOUND = 5
+    TRAINING_EPISODES = 25000
     
     ANSWERS = None
     
